@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Quieres ser mi San Valentín?</title>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+  :root{
+    --pink-1:#ff7eb3;
+    --pink-2:#ff758c;
+    --pink-3:#ff4d8d;
+    --bg: linear-gradient(45deg, var(--pink-1), var(--pink-2), var(--pink-1));
+    --card: rgba(255,255,255,.92);
+    --shadow: 0 18px 45px rgba(0,0,0,.18);
+    --radius: 26px;
+    --border: 8px solid var(--pink-3);
+    --text: #333;
+    --muted: #666;
+    --success: #24b36b;
+    --danger: #ff3b30;
+    --focus: 0 0 0 4px rgba(255,77,141,.25);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    color:var(--text);
+    padding:18px;
+  }
+
+  .glow{
+    position:fixed;
+    inset:-20%;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,.28) 0 22%, transparent 45%),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,.18) 0 18%, transparent 40%),
+      radial-gradient(circle at 30% 80%, rgba(255,255,255,.18) 0 18%, transparent 40%);
+    filter: blur(12px);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .container{
+    width:min(860px, 100%);
+    position:relative;
+    background:var(--card);
+    border-radius:var(--radius);
+    border:var(--border);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    padding: clamp(22px, 3.5vw, 42px);
+    z-index:1;
+  }
+
+  .floaters{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.85;
+  }
+  .floater{
+    position:absolute;
+    font-size:22px;
+    color: rgba(255,77,141,.18);
+    animation: floaty 6s ease-in-out infinite;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.05));
+  }
+  .floater:nth-child(2){ animation-duration:7.5s; }
+  .floater:nth-child(3){ animation-duration:5.5s; }
+  .floater:nth-child(4){ animation-duration:8.3s; }
+  .floater:nth-child(5){ animation-duration:6.8s; }
+
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0) rotate(0deg) scale(1); }
+    50%{ transform: translateY(-18px) rotate(10deg) scale(1.04); }
+  }
+
+  header{
+    position:relative;
+    z-index:2;
+    text-align:center;
+  }
+
+  h1{
+    margin:0 0 14px 0;
+    font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+    color: var(--pink-3);
+    text-shadow: 0 2px 10px rgba(255,77,141,.15);
+    letter-spacing:.2px;
+  }
+  .subtitle{
+    margin:0 auto;
+    max-width: 60ch;
+    font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+    color: var(--muted);
+    line-height:1.45;
+  }
+
+  .content{
+    position:relative;
+    z-index:2;
+    margin-top: clamp(18px, 3vw, 28px);
+  }
+
+  .buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: clamp(18px, 3.6vw, 34px);
+    position:relative;
+    min-height: 120px;
+  }
+
+  .btn{
+    border:0;
+    cursor:pointer;
+    user-select:none;
+    padding: 16px 42px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: clamp(1.25rem, 2.6vw, 1.8rem);
+    box-shadow: 0 10px 18px rgba(0,0,0,.12);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    outline:none;
+    touch-action: manipulation;
+  }
+
+  .btn:focus-visible{
+    box-shadow: 0 10px 18px rgba(0,0,0,.12), var(--focus);
+  }
+
+  .btn-yes{
+    background: linear-gradient(180deg, #36d27d, var(--success));
+    color: #fff;
+  }
+  .btn-yes:hover{ transform: translateY(-2px) scale(1.03); }
+  .btn-yes:active{ transform: translateY(1px) scale(.99); }
+
+  .btn-no{
+    background: linear-gradient(180deg, #ff5a52, var(--danger));
+    color:#fff;
+    will-change: transform, left, top;
+  }
+  .btn-no:hover{ filter: brightness(.98); }
+
+  .message{
+    display:none;
+    margin: clamp(18px, 3.2vw, 30px) auto 0;
+    max-width: 70ch;
+    padding: 18px 18px;
+    border-radius: 18px;
+    background: rgba(255, 77, 141, 0.10);
+    border-left: 8px solid var(--pink-3);
+    animation: pop .35s ease both;
+  }
+  @keyframes pop{
+    from{ transform: translateY(10px); opacity:0; }
+    to{ transform: translateY(0); opacity:1; }
+  }
+
+  .message h2{
+    margin: 0 0 10px 0;
+    color: var(--pink-3);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+  }
+  .message p{
+    margin: 8px 0 0 0;
+    color: #444;
+    font-size: clamp(1.03rem, 2.1vw, 1.2rem);
+    line-height:1.6;
+    word-wrap: break-word;
+  }
+
+  .footer{
+    margin-top: clamp(18px, 3vw, 28px);
+    text-align:center;
+    color:#777;
+    font-size:.95rem;
+    position:relative;
+    z-index:2;
+  }
+
+  .particles{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    overflow:hidden;
+  }
+  .particle{
+    position:absolute;
+    opacity:0;
+    transform: translate(-50%, -50%);
+    animation: rise var(--dur, 2200ms) linear forwards;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    will-change: transform, opacity;
+  }
+  @keyframes rise{
+    0%   { opacity:1; transform: translate(-50%, -50%) translateY(0) rotate(0deg) scale(var(--s,1)); }
+    100% { opacity:0; transform: translate(-50%, -50%) translateY(-130px) rotate(var(--r,20deg)) scale(calc(var(--s,1) * 1.08)); }
+  }
+
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(30,30,30,.92);
+    color:#fff;
+    padding: 12px 16px;
+    border-radius: 14px;
+    box-shadow: 0 12px 26px rgba(0,0,0,.18);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .25s ease, transform .25s ease;
+    max-width: min(560px, 92vw);
+    text-align:center;
+    z-index: 999;
+    font-size: .98rem;
+  }
+  .toast.show{
+    opacity:1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ✅ MEGAMODO TELÉFONO */
+  @media (max-width: 520px){
+    body{ padding: 10px; overflow:auto; }
+
+    .container{
+      border-width: 6px;
+      padding: 18px 16px;
+      border-radius: 22px;
+    }
+
+    .floater{ font-size: 18px; }
+
+    h1{
+      font-size: 1.85rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle{
+      font-size: 1.02rem;
+      max-width: 34ch;
+    }
+
+    .buttons{
+      flex-direction: column;
+      gap: 14px;
+      min-height: 170px; /* más espacio para el botón no */
+      margin-top: 18px;
+    }
+
+    .btn{
+      width: 100%;
+      max-width: 360px;
+      padding: 14px 18px;
+      font-size: 1.25rem;
+    }
+
+    /* 🔥 Evita que el botón "No" se salga en móvil */
+    #noButton{
+      max-width: 360px;
+    }
+
+    .message{
+      padding: 16px;
+      border-left-width: 6px;
+    }
+
+    .message h2{
+      font-size: 1.5rem;
+    }
+
+    .message p{
+      font-size: 1.05rem;
+    }
+
+    .toast{
+      bottom: 10px;
+      font-size: .95rem;
+      padding: 10px 12px;
+    }
+  }
+
+  /* ✅ Teléfonos MUY pequeños */
+  @media (max-width: 360px){
+    h1{ font-size: 1.65rem; }
+    .btn{ font-size: 1.15rem; }
+    .subtitle{ font-size: .98rem; }
+    .buttons{ min-height: 185px; }
+  }
+</style>
+
+</head>
+
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <main class="container" role="main">
+    <div class="floaters" aria-hidden="true">
+      <div class="floater" style="top:10%; left:6%;">💞</div>
+      <div class="floater" style="top:14%; right:10%;">💞</div>
+      <div class="floater" style="bottom:18%; left:14%;">💞</div>
+      <div class="floater" style="bottom:10%; right:6%;">💞</div>
+      <div class="floater" style="top:52%; left:4%;">💞</div>
+    </div>
+
+    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <header>
+      <h1 id="title">¿Quieres ser mi San Valentín?</h1>
+      <p class="subtitle" id="subtitle">
+        mira el boton verde mejor princesa
+      </p>
+    </header>
+
+    <section class="content">
+      <div class="buttons" id="buttonArea">
+        <button class="btn btn-yes" id="yesButton" type="button">
+          <span>¡Sí!</span> 💖
+        </button>
+
+        <button class="btn btn-no" id="noButton" type="button" aria-label="No">
+          <span>No</span> 😢
+        </button>
+      </div>
+
+      <div class="message" id="successMessage" role="status" aria-live="polite">
+        <h2><i class="fas fa-heart"></i> ¡MUUUUUUAAAAA! <i class="fas fa-heart"></i></h2>
+        <p>
+          💞te amito mi amorcito hermocho 💞
+        </p>
+        <p style="margin-top:12px; font-weight:800;">
+          Que es lo que habra en esa cajita mi amor???
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>Hecho con 💞 mucho amorcito </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const yesBtn = document.getElementById("yesButton");
+      const noBtn = document.getElementById("noButton");
+      const msg = document.getElementById("successMessage");
+      const particles = document.getElementById("particles");
+      const container = document.querySelector(".container");
+      const buttonArea = document.getElementById("buttonArea");
+      const title = document.getElementById("title");
+      const subtitle = document.getElementById("subtitle");
+      const toast = document.getElementById("toast");
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let noAttempts = 0;
+      let celebrating = false;
+
+      // ---- Utils
+      function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+      function showToast(text, ms = 1700){
+        toast.textContent = text;
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toast.classList.remove("show"), ms);
+      }
+
+      function spawnHearts({
+        count = 10,
+        x = 50,
+        y = 60,
+        spread = 26
+      } = {}){
+        if (reducedMotion) return;
+
+        for(let i=0; i<count; i++){
+          const el = document.createElement("div");
+          el.className = "particle";
+          el.textContent = Math.random() < 0.2 ? "💞" : (Math.random() < 0.5 ? "💞" : "💞");
+
+          const dx = (Math.random() * spread * 2) - spread;
+          const dy = (Math.random() * spread * 2) - spread;
+
+          el.style.left = `calc(${x}% + ${dx}px)`;
+          el.style.top  = `calc(${y}% + ${dy}px)`;
+
+          el.style.setProperty("--dur", `${Math.floor(1800 + Math.random() * 1500)}ms`);
+          el.style.setProperty("--r", `${Math.floor((Math.random() * 60) - 30)}deg`);
+          el.style.setProperty("--s", `${(0.7 + Math.random() * 0.9).toFixed(2)}`);
+
+          particles.appendChild(el);
+          setTimeout(() => el.remove(), 3500);
+        }
+      }
+
+      // ---- Movimiento inteligente del botón "No"
+      function moveNoButton(){
+        // Evitar moverlo si ya celebramos
+        if (celebrating) return;
+
+        const areaRect = buttonArea.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        // Márgenes para que no toque bordes
+        const padding = 10;
+
+        // Rango disponible dentro del área de botones
+        const maxX = areaRect.width  - btnRect.width  - padding * 2;
+        const maxY = areaRect.height - btnRect.height - padding * 2;
+
+        // Si el área es muy pequeña, no hagas locuras
+        const safeX = Math.max(0, maxX);
+        const safeY = Math.max(0, maxY);
+
+        // Evitar que se quede pegado al mismo lugar: intenta varias veces y elige una "lejana"
+        const current = noBtn.getBoundingClientRect();
+        let best = null;
+
+        for(let t=0; t<8; t++){
+          const x = padding + Math.random() * safeX;
+          const y = padding + Math.random() * safeY;
+
+          const dist = Math.hypot(
+            (areaRect.left + x) - current.left,
+            (areaRect.top + y) - current.top
+          );
+
+          if (!best || dist > best.dist) best = {x,y,dist};
+        }
+
+        noBtn.style.position = "absolute";
+        noBtn.style.left = `${best.x}px`;
+        noBtn.style.top  = `${best.y}px`;
+
+        // Pequeño "rebote"
+        if (!reducedMotion){
+          noBtn.animate(
+            [
+              { transform: "translateY(0) scale(1)" },
+              { transform: "translateY(-2px) scale(1.02)" },
+              { transform: "translateY(0) scale(1)" }
+            ],
+            { duration: 220, easing: "ease-out" }
+          );
+        }
+
+        // Partículas cerca del botón
+        const xPct = ((best.x + btnRect.width/2) / areaRect.width) * 100;
+        const yPct = ((best.y + btnRect.height/2) / areaRect.height) * 100;
+        spawnHearts({ count: 6, x: xPct, y: yPct, spread: 18 });
+      }
+
+      function updateNoText(){
+        const stages = [
+          { at: 2,  text: "¿Seguraaa? " },
+          { at: 4,  text: "pensalo mi amor" },
+          { at: 6,  text: "😭" },
+          { at: 8,  text: "creo que esta mejor el color verde" },
+          { at: 10, text: "Deci que shi 💞" },
+        ];
+        for (const s of stages){
+          if (noAttempts === s.at) noBtn.innerHTML = `<span>${s.text}</span>`;
+        }
+      }
+
+      // ---- Eventos
+      noBtn.addEventListener("pointerenter", () => {
+        noAttempts++;
+        updateNoText();
+        moveNoButton();
+
+        // Mensajitos tipo "juego" sin usar alert
+        if (noAttempts === 5) showToast("ño");
+        if (noAttempts === 9) showToast("precionalo pues");
+      });
+
+      noBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        noAttempts++;
+        updateNoText();
+        moveNoButton();
+        if (noAttempts >= 7) showToast("y si pobras con si :( ???");
+      });
+
+      yesBtn.addEventListener("click", () => {
+        celebrating = true;
+
+        // UI changes
+        msg.style.display = "block";
+        title.textContent = "¡YEIIII! 💞";
+        subtitle.textContent = "ESTOY MUY FELIZ DE QUE PASEMOS NUESTRO PRIMER 14 DE FEBRERO JUNTOS MI AMOR";
+
+        // Hide buttons with animation
+        if (!reducedMotion){
+          buttonArea.animate(
+            [{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(8px)" }],
+            { duration: 260, easing: "ease" }
+          ).onfinish = () => buttonArea.style.display = "none";
+        } else {
+          buttonArea.style.display = "none";
+        }
+
+        // Big burst
+        spawnHearts({ count: 45, x: 50, y: 60, spread: 40 });
+
+        // Celebration loop (stops later)
+        if (!reducedMotion){
+          const interval = setInterval(() => {
+            spawnHearts({ count: 12, x: 50, y: 62, spread: 55 });
+          }, 650);
+
+          setTimeout(() => clearInterval(interval), 8000);
+        }
+
+        showToast("¡Yo sabia que ibas a decir que shi! 💞", 1400);
+      });
+
+      // Pequeño efecto al cargar
+      setTimeout(() => {
+        spawnHearts({ count: 14, x: 50, y: 62, spread: 50 });
+      }, 200);
+    });
+  </script>
+</body>
+</html>
